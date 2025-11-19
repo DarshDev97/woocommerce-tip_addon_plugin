@@ -38,7 +38,7 @@ Replace with your category slugs where tips should appear.
 
 Customize tip amounts - Edit lines 47-50 to change button values:
 
-php<button type="button" class="tip-btn-product" data-amount="5">$5</button>
+<button type="button" class="tip-btn-product" data-amount="5">$5</button>
 ```
 
 3. **Customize colors** - Modify the CSS section (lines 70-200) to match your theme
