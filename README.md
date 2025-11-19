@@ -36,7 +36,7 @@ Set your product categories - Edit line 17 in the code:
 php$allowed_categories = array('album', 'upcoming');
 Replace with your category slugs where tips should appear.
 
-Customize tip amounts - Edit lines 47-50 to change button values:
+Customize tip amounts - Edit lines 47-50 to change button values
 
 <button type="button" class="tip-btn-product" data-amount="5">$5</button>
 ```
