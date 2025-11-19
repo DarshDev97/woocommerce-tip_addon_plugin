@@ -73,13 +73,8 @@ Edit the button values in lines 47-50
 7. Full amount (product + tip) sent to payment gateway
 8. Admin can see tips in order details
 
-## 🛒 Cart Display Example
-```
-Crown Snatcher                    $10.00
-  └─ Artist Support: $10.00
-1 × $10.00
+````
 
-Subtotal:                         $20.00
 💳 Payment Gateway Compatibility
 
 ✅ PayPal Standard
@@ -117,3 +112,6 @@ If you encounter any issues or have questions:
 Contact: info.technofyweb@gmail.com
 
 ⭐ If this helped your project, please star this repository!
+
+
+
