@@ -1,25 +1,17 @@
 <?php
 
-/**
- * Add Artist Support Tip Feature to WooCommerce - Product Page Version
- * Add this code to your theme's functions.php file or create a custom plugin
- * Tip shows as separate line item, not added to product price
- */
-
-// 1. Add custom tip field on single product page for specific categories
 add_action('woocommerce_before_add_to_cart_button', 'add_artist_tip_on_product_page');
 
 function add_artist_tip_on_product_page()
 {
     global $product;
 
-    // Get product categories
+
     $product_cats = wp_get_post_terms($product->get_id(), 'product_cat', array('fields' => 'slugs'));
 
-    // Define which categories should show the tip field (change these to your category slugs)
-    $allowed_categories = array('album', 'upcoming'); // Edit these category slugs
+    // Define which categories should show the tip field 
+    $allowed_categories = array('album', 'upcoming'); 
 
-    // Check if product is in allowed categories
     $show_tip = false;
     foreach ($product_cats as $cat) {
         if (in_array($cat, $allowed_categories)) {
@@ -194,23 +186,23 @@ function add_artist_tip_on_product_page()
                 e.preventDefault();
                 var amount = $(this).data('amount');
 
-                // Update active state
+               
                 $('.tip-btn-product').removeClass('active');
                 $(this).addClass('active');
 
-                // Set input values
+               
                 $('#product_artist_tip').val(amount);
                 $('#artist_tip_amount_hidden').val(amount);
             });
 
-            // Custom input functionality
+           
             $('#product_artist_tip').on('input change', function () {
                 var amount = parseFloat($(this).val()) || 0;
 
-                // Remove active state from buttons if custom amount
+               
                 $('.tip-btn-product').removeClass('active');
 
-                // Update hidden field
+               
                 $('#artist_tip_amount_hidden').val(amount);
             });
         });
@@ -218,20 +210,20 @@ function add_artist_tip_on_product_page()
     <?php
 }
 
-// 2. Add tip amount to cart item data
+
 add_filter('woocommerce_add_cart_item_data', 'add_artist_tip_to_cart_item', 10, 3);
 
 function add_artist_tip_to_cart_item($cart_item_data, $product_id, $variation_id)
 {
     if (isset($_POST['artist_tip_amount']) && floatval($_POST['artist_tip_amount']) > 0) {
         $cart_item_data['artist_tip'] = floatval($_POST['artist_tip_amount']);
-        // Make each item unique to prevent combining
+      
         $cart_item_data['unique_key'] = md5(microtime() . rand());
     }
     return $cart_item_data;
 }
 
-// 3. Display tip in cart (shows under product name)
+
 add_filter('woocommerce_get_item_data', 'display_artist_tip_in_cart', 10, 2);
 
 function display_artist_tip_in_cart($item_data, $cart_item)
@@ -245,7 +237,7 @@ function display_artist_tip_in_cart($item_data, $cart_item)
     return $item_data;
 }
 
-// 4. Add tip as separate fee in cart totals (NOT in product price)
+
 add_action('woocommerce_cart_calculate_fees', 'add_artist_tip_as_separate_fee', 10, 1);
 
 function add_artist_tip_as_separate_fee($cart)
@@ -256,14 +248,14 @@ function add_artist_tip_as_separate_fee($cart)
 
     $total_tips = 0;
 
-    // Collect all tips from cart items and sum them
+
     foreach ($cart->get_cart() as $cart_item_key => $cart_item) {
         if (isset($cart_item['artist_tip']) && $cart_item['artist_tip'] > 0) {
             $total_tips += $cart_item['artist_tip'];
         }
     }
 
-    // Add ONE combined tip fee instead of multiple
+
     if ($total_tips > 0) {
         $cart->add_fee(
             'Artist Support',
@@ -273,7 +265,7 @@ function add_artist_tip_as_separate_fee($cart)
     }
 }
 
-// 5. Save tip to order meta
+
 add_action('woocommerce_checkout_create_order_line_item', 'save_artist_tip_to_order', 10, 4);
 
 function save_artist_tip_to_order($item, $cart_item_key, $values, $order)
@@ -283,7 +275,7 @@ function save_artist_tip_to_order($item, $cart_item_key, $values, $order)
     }
 }
 
-// 6. Display tip in order details (admin)
+
 add_action('woocommerce_admin_order_data_after_order_details', 'display_artist_tip_in_admin_order');
 
 function display_artist_tip_in_admin_order($order)
@@ -305,7 +297,7 @@ function display_artist_tip_in_admin_order($order)
 }
 
 
-// 7. Fix mini cart subtotal to include artist support tips
+
 add_filter('woocommerce_cart_subtotal', 'update_mini_cart_subtotal_with_tips', 10, 3);
 
 function update_mini_cart_subtotal_with_tips($cart_subtotal, $compound, $cart)
@@ -314,7 +306,7 @@ function update_mini_cart_subtotal_with_tips($cart_subtotal, $compound, $cart)
         $cart = WC()->cart;
     }
 
-    // Calculate total tips
+
     $total_tips = 0;
     foreach ($cart->get_cart() as $cart_item) {
         if (isset($cart_item['artist_tip']) && $cart_item['artist_tip'] > 0) {
@@ -322,7 +314,7 @@ function update_mini_cart_subtotal_with_tips($cart_subtotal, $compound, $cart)
         }
     }
 
-    // If there are tips, add them to subtotal display
+
     if ($total_tips > 0) {
         $subtotal = $cart->get_subtotal();
         $new_total = $subtotal + $total_tips;
@@ -332,12 +324,12 @@ function update_mini_cart_subtotal_with_tips($cart_subtotal, $compound, $cart)
     return $cart_subtotal;
 }
 
-// 8. Ensure mini cart refreshes with tips
+
 add_filter('woocommerce_add_to_cart_fragments', 'refresh_mini_cart_fragments_with_tips');
 
 function refresh_mini_cart_fragments_with_tips($fragments)
 {
-    // Force cart recalculation
+ 
     WC()->cart->calculate_totals();
 
     return $fragments;
